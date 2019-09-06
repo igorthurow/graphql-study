@@ -4,6 +4,8 @@ const express = require('express')
 
 const app = express()
 
+const sendPost = (params) => axios.post('https://jsonplaceholder.typicode.com/posts', params).then(response => response.data)
+
 const getTodos = () =>
   axios
     .get('https://jsonplaceholder.typicode.com/todos/1')
@@ -53,6 +55,10 @@ const typeDefs = gql`
 		completed: Boolean
 	}
 
+	type Mutation {
+		post(title: String!, body: String!, userId: ID!): Post
+	}
+
   # The "Query" type is the root of all GraphQL queries.
   # (A "Mutation" type will be covered later on.)
   type Query {
@@ -75,7 +81,10 @@ const resolvers = {
 		},
 		todoList: () => getTodos(),
     books: (_, { id }) => id ? [books.find(book => book.id === id)] : books
-  }
+	},
+	Mutation: {
+		post: (_, params) => sendPost(params)
+	}
 }
 
 // In the most basic sense, the ApolloServer can be started
