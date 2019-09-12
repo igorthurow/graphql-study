@@ -12,7 +12,26 @@ const sendPost = (params) =>
 const getTodos = () =>
   axios.get(`${API}/todos/1`).then((response) => response.data)
 
-const getPosts = () => axios.get(`${API}/posts`).then((response) => response.data)
+const getPosts = () =>
+  axios.get(`${API}/posts`).then((response) => response.data)
+
+const foods = [
+  {
+    name: 'Coconut',
+    kind: 'fresh',
+    id: 1
+  },
+  {
+    name: 'Banana',
+    kind: 'fresh',
+    id: 2
+  },
+  {
+    name: 'Sardine',
+    kind: 'industrialized',
+    id: 3
+  }
+]
 
 const books = [
   {
@@ -57,12 +76,23 @@ const typeDefs = gql`
     post(title: String!, body: String!, userId: ID!): Post
   }
 
+  type Food {
+    name: String
+    kind: String
+  }
+
+  type Market {
+    productsId: String
+    food(kind: String): String
+  }
+
   # The "Query" type is the root of all GraphQL queries.
   # (A "Mutation" type will be covered later on.)
   type Query {
     posts(id: ID): [Post]
     todoList: TodoList
     books(id: ID): [Book]
+    market: Market
   }
 `
 
@@ -78,7 +108,33 @@ const resolvers = {
       return [posts.find((post) => post.id === Number(id))]
     },
     todoList: () => getTodos(),
-    books: (_, { id }) => (id ? [books.find((book) => book.id === id)] : books)
+    books: (_, { id }) => (id ? [books.find((book) => book.id === id)] : books),
+    market: () =>
+      foods.reduce(
+        (acc, { id, ...rest }) => {
+          acc.productsId.push(id)
+          acc.foods.push(rest)
+
+          return acc
+        },
+        { productsId: [], foods: [] }
+      )
+  },
+  Market: {
+    productsId: ({ productsId }) => productsId.join(', '),
+    food: ({ foods }, { kind }) => {
+      if (!kind) return foods.map((food) => food.name).join(', ')
+
+      return foods
+        .reduce((acc, curr) => {
+          if (curr.kind !== kind) return acc
+
+					acc.push(curr.name)
+
+          return acc
+        }, [])
+        .join(', ')
+    }
   },
   Mutation: {
     post: (_, params) => sendPost(params)
