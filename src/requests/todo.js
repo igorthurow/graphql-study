@@ -1,13 +1,11 @@
-const axiosInstance = require('../API')
+const { post, get } = require('../API')
 
-const sendPost = (params) =>
-  axiosInstance.post('/posts', params).then((response) => response.data)
+const sendPost = ({ userId, title, body }) =>
+  post('/posts', { userId, title, body }).then(({ data }) => data)
 
-const getTodos = () =>
-  axiosInstance.get('/todos/1').then((response) => response.data)
+const getTodos = () => get('/todos/1').then(({ data }) => data)
 
-const getPosts = () =>
-  axiosInstance.get('/posts').then((response) => response.data)
+const getPosts = () => get('/posts').then(({ data }) => data)
 
 module.exports = {
   getPosts,
