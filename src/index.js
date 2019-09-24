@@ -1,6 +1,6 @@
 const { ApolloServer, gql } = require('apollo-server-express')
 const express = require('express')
-const { getTodos, getPosts, sendPost } = require('./requests/todo')
+const { getTodos, getPosts, sendPost, getPostsId } = require('./requests/todo')
 const { foods, books } = require('./requests/mocks')
 
 const app = express()
