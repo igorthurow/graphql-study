@@ -1,50 +1,9 @@
 const { ApolloServer, gql } = require('apollo-server-express')
-const axios = require('axios')
 const express = require('express')
-
-const API = 'https://jsonplaceholder.typicode.com'
+const { getTodos, getPosts, sendPost } = require('./requests/todo')
+const { foods, books } = require('./requests/mocks')
 
 const app = express()
-
-const sendPost = (params) =>
-  axios.post(`${API}/posts`, params).then((response) => response.data)
-
-const getTodos = () =>
-  axios.get(`${API}/todos/1`).then((response) => response.data)
-
-const getPosts = () =>
-  axios.get(`${API}/posts`).then((response) => response.data)
-
-const foods = [
-  {
-    name: 'Coconut',
-    kind: 'fresh',
-    id: 1
-  },
-  {
-    name: 'Banana',
-    kind: 'fresh',
-    id: 2
-  },
-  {
-    name: 'Sardine',
-    kind: 'industrialized',
-    id: 3
-  }
-]
-
-const books = [
-  {
-    id: '1',
-    title: 'Harry Potter and the Chamber of Secrets',
-    author: 'J.K. Rowling'
-  },
-  {
-    id: '2',
-    title: 'Jurassic Park',
-    author: 'Michael Crichton'
-  }
-]
 
 // Type definitions define the "shape" of your data and specify
 // which ways the data can be fetched from the GraphQL server.
